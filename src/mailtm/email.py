@@ -10,7 +10,7 @@ def username_gen(length=24, chars= string.ascii_letters + string.digits):
 def password_gen(length=8, chars= string.ascii_letters + string.digits + string.punctuation):
     return ''.join(random.choice(chars) for _ in range(length))  
 
-class Email(Listen):
+class Email(Listen, proxies):
     token = ""
     domain = ""
     address = ""
@@ -22,7 +22,7 @@ class Email(Listen):
 
     def domains(self):
         url = "https://api.mail.tm/domains"
-        response = self.session.get(url)
+        response = self.session.get(url, proxies=proxies)
         response.raise_for_status()
 
         try:
@@ -47,7 +47,7 @@ class Email(Listen):
             "password": password
         }
         headers = { 'Content-Type': 'application/json' }
-        response = self.session.post(url, headers=headers, json=payload)
+        response = self.session.post(url, headers=headers, json=payload, proxies=proxies)
         response.raise_for_status()
 
         data = response.json()
@@ -68,7 +68,7 @@ class Email(Listen):
             "password": password
         }
         headers = {'Content-Type': 'application/json'}
-        response = self.session.post(url, headers=headers, json=payload)
+        response = self.session.post(url, headers=headers, json=payload, proxies=proxies)
         response.raise_for_status()
         try:
             self.token = response.json()['token']
@@ -77,12 +77,16 @@ class Email(Listen):
         
 
 if __name__ == "__main__":
+    Dict = {
+        "https": "123.635.345"
+    }
+    
     def listener(message):
         print("\nSubject: " + message['subject'])
         print("Content: " + message['text'] if message['text'] else message['html'])
 
     # Get Domains
-    test = Email()
+    test = Email(Dict)
     print("\nDomain: " + test.domain)
 
     # Make new email address
