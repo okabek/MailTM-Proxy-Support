@@ -4,14 +4,14 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="MailTm",
+    name="MailTm-Proxy-Support",
     version="0.0.81",
     author="MainSilent",
     description="Temporary Email",
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords=['mail', 'email', 'temporary mail', 'temporary email', 'mailtm'],
-    url="https://github.com/MainSilent/MailTm",
+    url="https://github.com/WeAreVandeg/MailTM-Proxy-Support",
     project_urls={
         "Bug Tracker": "https://github.com/MainSilent/MailTm/issues",
     },
