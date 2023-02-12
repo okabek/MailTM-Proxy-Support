@@ -4,11 +4,14 @@ import random
 import requests
 from .message import Listen
 
-def username_gen(length=24, chars= string.ascii_letters + string.digits):
-    return ''.join(random.choice(chars) for _ in range(length))  
 
-def password_gen(length=8, chars= string.ascii_letters + string.digits + string.punctuation):
-    return ''.join(random.choice(chars) for _ in range(length))  
+def username_gen(length=24, chars=string.ascii_letters + string.digits):
+    return ''.join(random.choice(chars) for _ in range(length))
+
+
+def password_gen(length=8, chars=string.ascii_letters + string.digits + string.punctuation):
+    return ''.join(random.choice(chars) for _ in range(length))
+
 
 class Email(Listen):
     token = ""
@@ -46,7 +49,7 @@ class Email(Listen):
             "address": f"{username}@{self.domain}",
             "password": password
         }
-        headers = { 'Content-Type': 'application/json' }
+        headers = {'Content-Type': 'application/json'}
         response = self.session.post(url, headers=headers, json=payload, proxies=proxies)
         response.raise_for_status()
 
@@ -74,16 +77,18 @@ class Email(Listen):
             self.token = response.json()['token']
         except:
             raise Exception("Failed to get token")
-        
+
 
 if __name__ == "__main__":
     Dict = {
         "https": "123.635.345"
     }
-    
+
+
     def listener(message):
         print("\nSubject: " + message['subject'])
         print("Content: " + message['text'] if message['text'] else message['html'])
+
 
     # Get Domains
     test = Email(Dict)
@@ -94,7 +99,7 @@ if __name__ == "__main__":
     print("\nEmail Adress: " + str(test.address))
 
     # Start listening
-    test.start(listener)
+    test.start(listener, proxies)
     print("\nWaiting for new emails...")
 
     # Stop listening
