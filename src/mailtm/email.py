@@ -10,7 +10,7 @@ def username_gen(length=24, chars= string.ascii_letters + string.digits):
 def password_gen(length=8, chars= string.ascii_letters + string.digits + string.punctuation):
     return ''.join(random.choice(chars) for _ in range(length))  
 
-class Email(Listen, proxies):
+class Email(Listen):
     token = ""
     domain = ""
     address = ""
@@ -20,7 +20,7 @@ class Email(Listen, proxies):
         if not self.domains():
             print("Failed to get domains")
 
-    def domains(self):
+    def domains(self, proxies):
         url = "https://api.mail.tm/domains"
         response = self.session.get(url, proxies=proxies)
         response.raise_for_status()
@@ -36,10 +36,10 @@ class Email(Listen, proxies):
         except:
             return False
 
-    def register(self, username=None, password=None, domain=None):
-        self.domain = domain if domain else self.domain
-        username = username if username else username_gen()
-        password = password if password else password_gen()
+    def register(self, proxies):
+        self.domain = self.domain
+        username = username_gen()
+        password = password_gen()
 
         url = "https://api.mail.tm/accounts"
         payload = {
@@ -61,7 +61,7 @@ class Email(Listen, proxies):
         if not self.address:
             raise Exception("Failed to make an address")
 
-    def get_token(self, password):
+    def get_token(self, password, proxies=proxies):
         url = "https://api.mail.tm/token"
         payload = {
             "address": self.address,
