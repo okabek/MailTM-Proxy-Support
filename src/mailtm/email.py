@@ -16,8 +16,8 @@ class Email(Listen):
     address = ""
     session = requests.Session()
 
-    def __init__(self):
-        if not self.domains():
+    def __init__(self, proxies):
+        if not self.domains(proxies):
             print("Failed to get domains")
 
     def domains(self, proxies):
@@ -56,12 +56,12 @@ class Email(Listen):
         except:
             self.address = f"{username}@{self.domain}"
 
-        self.get_token(password)
+        self.get_token(password, proxies)
 
         if not self.address:
             raise Exception("Failed to make an address")
 
-    def get_token(self, password, proxies=proxies):
+    def get_token(self, password, proxies):
         url = "https://api.mail.tm/token"
         payload = {
             "address": self.address,
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     print("\nDomain: " + test.domain)
 
     # Make new email address
-    test.register()
+    test.register(Dict)
     print("\nEmail Adress: " + str(test.address))
 
     # Start listening
