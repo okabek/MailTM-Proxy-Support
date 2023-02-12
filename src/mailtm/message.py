@@ -6,10 +6,10 @@ class Listen:
     listen = False
     message_ids = []
 
-    def message_list(self):
+    def message_list(self, proxies):
         url = "https://api.mail.tm/messages"
         headers = { 'Authorization': 'Bearer ' + self.token }
-        response = self.session.get(url, headers=headers)
+        response = self.session.get(url, headers=headers, proxies=proxies)
         response.raise_for_status()
         
         data = response.json()
@@ -18,32 +18,32 @@ class Listen:
                         if data['hydra:member'][i]['id'] not in self.message_ids
                 ]
 
-    def message(self, idx):
+    def message(self, idx, proxies):
         url = "https://api.mail.tm/messages/" + idx
         headers = { 'Authorization': 'Bearer ' + self.token }
-        response = self.session.get(url, headers=headers)
+        response = self.session.get(url, headers=headers, proxies=proxies)
         response.raise_for_status()
         return response.json()
 
-    def run(self):
+    def run(self, proxies):
         while self.listen:
-            for message in self.message_list():
+            for message in self.message_list(proxies):
                 self.message_ids.append(message['id'])
-                message = self.message(message['id'])
+                message = self.message(message['id'], proxies)
                 self.listener(message)
 
             time.sleep(self.interval)
 
-    def start(self, listener, interval=3):
+    def start(self, listener, proxies):
         if self.listen:
             self.stop()
 
         self.listener = listener
-        self.interval = interval
+        self.interval = 3
         self.listen = True
 
         # Start listening thread
-        self.thread = Thread(target=self.run)
+        self.thread = Thread(target=self.run, args=[proxies])
         self.thread.start()
     
     def stop(self):
